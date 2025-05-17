@@ -61,7 +61,7 @@ const updateQuote = () => {
   max-width: 90%;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s ease;
 }
 
 .footer:hover .quote {
