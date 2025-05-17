@@ -1,14 +1,21 @@
 <script setup>
 import TimerCounter from '../components/TimerCounter.vue'
 import Logo from '@/components/Logo.vue'
+import SoundCloudPlayer from "@/components/SoundCloudPlayer.vue";
+
+const songURL = '2kizz21090/chto-to-xrupkoe'
 </script>
 
 <template>
   <div class="about">
     <h1>Inspire. Stay tuned.</h1>
   </div>
-  <!--  <TimerCounter></TimerCounter>-->
-  <!--  <Logo>  </Logo>-->
+
+  <SoundCloudPlayer
+    :song-url="songURL"
+    :start-time="28500"
+    :auto-play="false"
+  />
 </template>
 
 <style>
