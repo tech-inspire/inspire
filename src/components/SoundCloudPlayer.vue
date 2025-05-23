@@ -10,15 +10,8 @@
       :src="iframeSrc"
     ></iframe>
 
-    <div v-if="volumeControl" style="margin-top: 8px;">
-      <input
-        id="volume"
-        type="range"
-        min="0"
-        max="100"
-        v-model="volume"
-        @input="updateVolume"
-      />
+    <div v-if="volumeControl" style="margin-top: 8px">
+      <input id="volume" type="range" min="0" max="100" v-model="volume" @input="updateVolume" />
     </div>
   </div>
 </template>
@@ -31,26 +24,27 @@ const props = defineProps({
   //   type: Number | null,
   //   required: false
   // },
-  songUrl: { // example: "2kizz21090/chto-to-xrupkoe"
+  songUrl: {
+    // example: "2kizz21090/chto-to-xrupkoe"
     type: String,
     required: true,
   },
   startTime: {
     type: Number,
-    default: 0 // milliseconds
+    default: 0, // milliseconds
   },
   startVolume: {
     type: Number,
-    default: 20 // %
+    default: 20, // %
   },
   autoPlay: {
     type: Boolean,
-    default: false
+    default: false,
   },
   volumeControl: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const iframe = ref(null)
@@ -71,7 +65,7 @@ const iframeSrc = computed(() => {
     show_teaser: 'false',
     sharing: 'false',
     show_playcount: 'false',
-    show_artwork: 'false'
+    show_artwork: 'false',
   })
   return `${baseUrl}?${params.toString()}`
 })
@@ -90,7 +84,7 @@ onMounted(() => {
         widget.seekTo(props.startTime)
 
         updateVolume = () => {
-            widget.setVolume(volume.value)
+          widget.setVolume(volume.value)
         }
       }
 
