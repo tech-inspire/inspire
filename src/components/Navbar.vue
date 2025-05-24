@@ -7,19 +7,20 @@
       <SearchInput v-model="searchStore.searchQuery" />
     </div>
     <div class="nav-links">
-      <a href="#">Sign In</a>
-      <a href="#">About</a>
+      <a v-if="user" :href="`/users/${user.id}`">My Profile</a>
+      <a v-if="!user" href="/login">Sign In</a>
+      <a v-else href="/logout">Sign Out</a>
     </div>
   </nav>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import InspireLogo from './Logo.vue'
 import SearchInput from './SearchInput.vue'
-import { ref } from 'vue'
-
 import { useSearchStore } from '@/stores/useSearchStore'
+import { getUserData } from '@/services/authCookies.js'
 const searchStore = useSearchStore()
+const user = getUserData()
 </script>
 
 <style scoped>

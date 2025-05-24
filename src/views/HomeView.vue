@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
-import { test } from '../services/api'
-import { getPostByID } from '@/services/posts'
+import { onMounted, type Ref, ref } from 'vue'
+import { getUserData } from '@/services/authCookies.ts'
+import type { User } from '@/models/User.ts'
 
-const post = await getPostByID('0196fd61-2184-7af9-b6ca-f83e715aa0a8')
-console.dir(post)
+let user: Ref<User | null> = ref(null)
+
+onMounted(() => {
+  user.value = getUserData()
+  console.log(user)
+})
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <h1>Hello, {{ user?.name || 'Guest' }}</h1>
   </main>
 </template>

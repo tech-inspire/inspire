@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" @mouseenter="startTimer" @mouseleave="stopTimer">
+  <div class="wrapper" @mouseenter="startTimer" @mouseleave="stopTimer" @click="redirectToHome">
     <div class="logo">
       <span class="text">in</span>
       <span class="dot" :class="{ blink: true }"></span>
@@ -13,6 +13,7 @@
 
 <script setup>
 import { ref, computed, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 
 const time = ref(0)
 let intervalId = null
@@ -42,6 +43,11 @@ function stopTimer() {
   clearInterval(intervalId)
   intervalId = null
   // time.value = 0 // Reset if needed
+}
+
+const router = useRouter()
+function redirectToHome() {
+  router.push('/')
 }
 
 onBeforeUnmount(() => {
