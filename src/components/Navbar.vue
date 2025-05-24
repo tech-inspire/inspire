@@ -4,12 +4,12 @@
       <InspireLogo />
     </div>
     <div class="search-wrapper">
-      <SearchInput v-model="searchStore.searchQuery" />
+      <SearchInput v-model="searchStore.searchQuery" @enter="onEnterSearch" />
     </div>
     <div class="nav-links">
       <a v-if="user" :href="`/users/${user.id}`">My Profile</a>
       <a v-if="!user" href="/login">Sign In</a>
-      <a v-else href="/logout">Sign Out</a>
+      <button v-else @click="doLogout" class="nav-link-button">Sign Out</button>
     </div>
   </nav>
 </template>
@@ -19,8 +19,22 @@ import InspireLogo from './Logo.vue'
 import SearchInput from './SearchInput.vue'
 import { useSearchStore } from '@/stores/useSearchStore'
 import { getUserData } from '@/services/authCookies.js'
+import { logout } from '@/services/auth.js'
 const searchStore = useSearchStore()
-const user = getUserData()
+let user = getUserData()
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+function onEnterSearch() {
+  if (searchStore.searchQuery.trim()) {
+    router.push({ path: '/search', query: { q: searchStore.searchQuery } })
+  }
+}
+
+function doLogout() {
+  logout()
+  user = null
+}
 </script>
 
 <style scoped>
@@ -62,6 +76,23 @@ const user = getUserData()
   margin-left: 2rem;
   font-size: 1.2rem;
   transition: color 0.3s;
+}
+
+.nav-link-button {
+  background: none;
+  border: none;
+  color: #ccc;
+  margin-left: 2rem;
+  font-size: 1.2rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s;
+  padding: 0;
+}
+
+.nav-link-button:hover {
+  color: white;
 }
 
 .nav-links a:hover {

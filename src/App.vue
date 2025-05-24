@@ -8,7 +8,16 @@ import Footer from './components/PageFooter.vue' // ← NEW
   <Navbar />
 
   <div class="router-view-container">
-    <RouterView />
+    <router-view v-slot="{ Component, route }">
+      <component
+        :is="Component"
+        v-if="route.name === 'PostPage' && $route.query.modal === '1'"
+        class="modal"
+      >
+        <Transition name="modal" />
+      </component>
+      <component :is="Component" v-else />
+    </router-view>
   </div>
 
   <Footer />

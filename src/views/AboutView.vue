@@ -3,7 +3,7 @@ import TimerCounter from '../components/TimerCounter.vue'
 import Logo from '@/components/Logo.vue'
 import SoundCloudPlayer from '@/components/SoundCloudPlayer.vue'
 
-const songURL = '2kizz21090/chto-to-xrupkoe'
+const songURL = 'ivoxxxygen/acid-blue'
 </script>
 
 <template>

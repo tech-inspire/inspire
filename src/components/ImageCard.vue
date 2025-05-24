@@ -1,53 +1,33 @@
 <template>
-  <div class="image-card" @click="selectImage">
-    <img :src="imageSrc" alt="Image" />
-    <!--    <p>{{ similarityPercentage }}%</p>-->
-    <!-- Example -->
-    <p>Similarity: {{ similarityPercentage }}%</p>
+  <div class="image-card" @click="emit('open', props.image.postId)">
+    <img :src="imageSrc" :class="{ loading: isLoading }" @load="handleImageLoad" />
+
+    <!--    <p>Similarity: {{ similarityPercentage }}%</p>-->
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, type PropType } from 'vue'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
 
-interface Image {
-  image_path: string
-  distance: number
+const props = defineProps<{ image: { postId: string; image_path: string; distance: number } }>()
+const emit = defineEmits<{ (e: 'open', id: string): void }>()
+
+const imageSrc = computed(() => props.image.image_path)
+const similarityPercentage = computed(() => (100 - props.image.distance * 100).toFixed(2))
+
+const isLoading = ref(true)
+
+function handleImageLoad() {
+  isLoading.value = false
 }
-
-export default defineComponent({
-  name: 'ImageCard',
-  props: {
-    image: {
-      type: Object as PropType<Image>,
-      required: true,
-    },
-  },
-  computed: {
-    imageSrc(): string {
-      return `http://localhost:5004/get_image_by_path?image_path=${encodeURIComponent(this.image.image_path)}`
-    },
-    similarityPercentage(): string {
-      return (100 - this.image.distance * 100).toFixed(2)
-    },
-  },
-  methods: {
-    selectImage() {
-      this.$emit('select', this.image)
-    },
-  },
-})
 </script>
 
 <style scoped>
 .image-card {
-  width: 420px;
-  height: auto;
+  width: 100%; /* Let the grid column define the width */
   padding: 20px;
-  background-color: #f9f9f9;
   font-family: 'Merchant Copy', monospace;
   color: #111;
-  //border: 2px dashed #333;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: left;
@@ -59,6 +39,11 @@ export default defineComponent({
 
 .image-card:hover {
   transform: scale(1.02);
+}
+
+.image-card img.loading {
+  filter: blur(10px);
+  transition: filter 0.4s ease;
 }
 
 .image-card img {

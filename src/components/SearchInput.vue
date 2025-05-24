@@ -5,6 +5,7 @@
     placeholder="Search..."
     v-model="modelValue"
     @input="$emit('update:modelValue', modelValue)"
+    @keyup.enter="$emit('enter')"
   />
 </template>
 
@@ -29,7 +30,7 @@ watch(
 <style scoped>
 .search {
   background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(6px);
   padding: 0.45rem 1rem;
   border-radius: 10px;
@@ -46,7 +47,7 @@ watch(
 
 .search:focus {
   outline: none;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.08);
 }

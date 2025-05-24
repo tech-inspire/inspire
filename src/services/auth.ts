@@ -9,6 +9,7 @@ import { mapAuthSession, mapUser } from '../mappers/authMapper'
 import type { AuthSession, User } from '../models/User.ts'
 import { setAuthTokens } from './authCookies.ts'
 import { Code, ConnectError } from '@connectrpc/connect'
+import CookieManager from '@/utils/cookieManager.ts'
 
 export async function login(
   login: { username?: string; email?: string },
@@ -95,8 +96,13 @@ export async function refreshToken(refreshToken: string): Promise<AuthSession> {
   return authSession
 }
 
-export async function logout(refreshToken: string): Promise<void> {
-  await authClient.logout({ refreshToken })
+export async function logout(): Promise<void> {
+  const token = CookieManager.getItem('refreshToken')
+  if (token) {
+    await authClient.logout({ refreshToken: token })
+  }
+
+  CookieManager.clearAuthTokens()
 }
 
 export async function resetPassword(email: string): Promise<void> {

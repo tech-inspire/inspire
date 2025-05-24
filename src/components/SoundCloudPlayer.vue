@@ -3,7 +3,7 @@
     <iframe
       ref="iframe"
       width="100%"
-      height="100"
+      height="120"
       scrolling="no"
       frameborder="no"
       allow="autoplay"

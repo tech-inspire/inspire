@@ -5,54 +5,29 @@
       <span class="dot" :class="{ blink: true }"></span>
       <span class="text">spire</span>
     </div>
-    <div class="timer" :class="{ show: isHovered }">
-      {{ formattedTime }}
-    </div>
+    <HoverTimer :visible="isHovered" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onBeforeUnmount } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import HoverTimer from '@/components/HoverTimer.vue'
 
-const time = ref(0)
-let intervalId = null
 const isHovered = ref(false)
-
-const formattedTime = computed(() => {
-  const milliseconds = String(time.value % 1000)
-    .padStart(3, '0')
-    .slice(0, 2)
-  const totalSeconds = Math.floor(time.value / 1000)
-  const seconds = String(totalSeconds % 60).padStart(2, '0')
-  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0')
-  return `${minutes}:${seconds}:${milliseconds}`
-})
+const router = useRouter()
 
 function startTimer() {
   isHovered.value = true
-  if (!intervalId) {
-    intervalId = setInterval(() => {
-      time.value += 10
-    }, 10)
-  }
 }
 
 function stopTimer() {
   isHovered.value = false
-  clearInterval(intervalId)
-  intervalId = null
-  // time.value = 0 // Reset if needed
 }
 
-const router = useRouter()
 function redirectToHome() {
   router.push('/')
 }
-
-onBeforeUnmount(() => {
-  clearInterval(intervalId)
-})
 </script>
 
 <style scoped>
@@ -92,25 +67,6 @@ onBeforeUnmount(() => {
 
 .dot.blink {
   animation: blink 1.5s infinite;
-}
-
-.timer {
-  position: absolute;
-  transform: translate(0, -40px);
-  font-size: 1.2rem;
-  font-family: 'San Francisco', monospace;
-  color: #c8c8c8;
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity 0.5s,
-    transform 0.5s;
-}
-
-.timer.show {
-  opacity: 1;
-  transform: translate(0, -20px);
-  pointer-events: auto;
 }
 
 @keyframes blink {
