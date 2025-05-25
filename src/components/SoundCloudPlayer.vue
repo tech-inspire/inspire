@@ -10,7 +10,8 @@
       :src="iframeSrc"
     ></iframe>
 
-    <div v-if="volumeControl" style="margin-top: 8px">
+    <div v-if="volumeControl && isReady" class="volume-control">
+      <!--      <label for="volume">Volume</label>-->
       <input id="volume" type="range" min="0" max="100" v-model="volume" @input="updateVolume" />
     </div>
   </div>
@@ -47,7 +48,14 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['loaded', 'playback-change'])
+
+const isReady = ref(false)
+const isPlaying = ref(false)
+const volume = ref(props.startVolume)
 const iframe = ref(null)
+
+let widget: any = null
 
 // https://developers.soundcloud.com/docs/api/html5-widget
 const iframeSrc = computed(() => {
@@ -70,22 +78,55 @@ const iframeSrc = computed(() => {
   return `${baseUrl}?${params.toString()}`
 })
 
-let updateVolume = () => {}
+let updateVolume = () => {
+  if (!widget) return
+  widget.setVolume(volume.value)
+}
+
+const playPause = () => {
+  if (!widget) return
+  widget.isPaused((paused: boolean) => {
+    if (paused) {
+      widget.play()
+    } else {
+      widget.pause()
+    }
+  })
+}
 
 onMounted(() => {
   const script = document.createElement('script')
   script.src = 'https://w.soundcloud.com/player/api.js'
   script.onload = () => {
-    const widget = window.SC.Widget(iframe.value)
+    widget = window.SC.Widget(iframe.value)
 
     widget.bind(window.SC.Widget.Events.READY, () => {
-      if (props.startTime > 0) {
-        widget.setVolume(props.startVolume)
-        widget.seekTo(props.startTime)
-
-        updateVolume = () => {
-          widget.setVolume(volume.value)
+      widget.getCurrentSound((sound) => {
+        if (sound) {
+          emit('loaded', {
+            title: sound.title,
+            artist: sound.user?.username,
+            permalinkUrl: sound.permalink_url,
+          })
         }
+      })
+
+      widget.bind(window.SC.Widget.Events.PLAY, () => {
+        isPlaying.value = true
+        emit('playback-change', true)
+      })
+
+      widget.bind(window.SC.Widget.Events.PAUSE, () => {
+        isPlaying.value = false
+        emit('playback-change', false)
+      })
+
+      isReady.value = true
+      volume.value = props.startVolume
+      widget.setVolume(props.startVolume)
+
+      if (props.startTime > 0) {
+        widget.seekTo(props.startTime)
       }
 
       if (props.autoPlay) {
@@ -96,4 +137,57 @@ onMounted(() => {
 
   document.head.appendChild(script)
 })
+
+defineExpose({
+  playPause,
+  isPlaying,
+})
 </script>
+
+<style scoped>
+.volume-control {
+  width: 25%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 8px;
+  padding: 0 0.5rem;
+  font-size: 0.9rem;
+  color: #ddd;
+  font-family: sans-serif;
+}
+
+.volume-control label {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.volume-control input[type='range'] {
+  flex-grow: 1;
+  appearance: none;
+  height: 4px;
+  background: #ccc;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s;
+}
+
+.volume-control input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #888;
+  transition: background 0.2s;
+}
+
+.volume-control input[type='range']::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #000000;
+}
+</style>
