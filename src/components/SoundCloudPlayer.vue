@@ -55,6 +55,7 @@ const isPlaying = ref(false)
 const volume = ref(props.startVolume)
 const iframe = ref(null)
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let widget: any = null
 
 // https://developers.soundcloud.com/docs/api/html5-widget
@@ -78,7 +79,7 @@ const iframeSrc = computed(() => {
   return `${baseUrl}?${params.toString()}`
 })
 
-let updateVolume = () => {
+const updateVolume = () => {
   if (!widget) return
   widget.setVolume(volume.value)
 }

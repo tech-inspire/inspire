@@ -39,7 +39,7 @@ import SoundCloudPlayer from '@/components/SoundCloudPlayer.vue'
 import PlayIcon from '@/assets/play.svg'
 import StopIcon from '@/assets/stop.svg'
 
-const props = defineProps<{
+defineProps<{
   songUrl: string
   startTime?: number
 }>()
