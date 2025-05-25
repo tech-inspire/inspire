@@ -39,7 +39,6 @@ onMounted(async () => {
 
     function check() {
       loadedCount++
-      console.log(loadedCount, total)
       if (loadedCount === total) {
         allImagesLoaded.value = true
       }
