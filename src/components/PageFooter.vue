@@ -60,11 +60,15 @@ const updateQuote = () => {
   transform: translateX(-50%);
   max-width: 90%;
   opacity: 0;
+  font-size: 1rem;
   pointer-events: none;
   transition: opacity 0.5s ease;
 }
 
 .footer:hover .quote {
   opacity: 1;
+  backdrop-filter: blur(5px);
+  background-color: rgba(255, 255, 255, 0.1); /* optional light overlay */
+  border-radius: 0.5rem;
 }
 </style>

@@ -25,12 +25,10 @@ export const router = createRouter({
       component: () => import('../views/SearchPage.vue'),
     },
     {
-      path: '/profile',
-      name: 'profile',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ProfileInfo.vue'),
+      path: '/users/:userId',
+      name: 'ProfilePage',
+      component: () => import('@/views/ProfileInfo.vue'),
+      props: true,
     },
     {
       path: '/login',

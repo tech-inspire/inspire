@@ -1,36 +1,53 @@
 <template>
   <div class="layout" v-if="post && author">
     <!-- MAIN POST -->
-    <article class="post">
-      <header class="author">
-        <img v-if="author.avatarUrl" :src="avatarSrc" class="avatar" alt="avatar" />
-        <div class="author-info">
-          <h2>{{ post.description }}</h2>
-          <p>by {{ `${author.username}` }}</p>
+    <transition name="fade-scale" appear>
+      <article class="post">
+        <header class="author">
+          <router-link
+            v-if="author.avatarUrl"
+            :to="{ name: 'ProfilePage', params: { userId: author.id } }"
+          >
+            <img :src="avatarSrc" class="avatar" alt="avatar" />
+          </router-link>
+
+          <div class="author-info">
+            <h2>{{ post.description }}</h2>
+
+            <p>
+              by
+              <router-link
+                :to="{ name: 'ProfilePage', params: { userId: author.id } }"
+                class="username-link"
+                >{{ author.username }}
+              </router-link>
+            </p>
+
+            <section class="audio-wrapper" v-if="post.soundcloudSong">
+              <MinimalSoundCloudPlayer
+                :songUrl="post.soundcloudSong"
+                :startTime="post.soundcloudSongStart || 0"
+              />
+            </section>
+          </div>
+        </header>
+
+        <transition name="fade">
+          <img :alt="post.description" v-if="imageSrc" :src="imageSrc" class="post-img" />
+        </transition>
+
+        <section class="caption">
+          <time :datetime="post.createdAt.toISOString()">
+            Posted at {{ formatDate(post.createdAt) }} - Inspire Web
+          </time>
+        </section>
+
+        <div class="button-row">
+          <button class="action-button" @click="goBack">× Close</button>
+          <button class="action-button" @click="downloadImage">↓ Download</button>
         </div>
-      </header>
-
-      <img :src="imageSrc" class="post-img" />
-
-      <section class="caption">
-        <time :datetime="post.createdAt.toISOString()">
-          Posted at {{ formatDate(post.createdAt) }} - Inspire Web
-        </time>
-      </section>
-
-      <section class="audio-wrapper">
-        <SoundCloudPlayer
-          v-if="post.soundcloudSong"
-          :songUrl="post.soundcloudSong"
-          :startTime="post.soundcloudSongStart || 0"
-          :startVolume="30"
-          :autoPlay="false"
-          :volumeControl="false"
-        />
-      </section>
-
-      <button class="close-btn" @click="goBack">× Close</button>
-    </article>
+      </article>
+    </transition>
 
     <!-- SIMILAR IMAGES -->
     <aside class="similar" v-if="similarPosts.length" @scroll="handleScroll">
@@ -45,7 +62,9 @@
             query: { ...route.query }, // keeps ?modal=1 if present
           }"
         >
-          <img :src="thumbSrc(p)" alt="similar image" class="similar-img" />
+          <transition name="fade" appear>
+            <img :src="thumbSrc(p)" alt="similar image" class="similar-img" />
+          </transition>
         </router-link>
       </div>
     </aside>
@@ -60,7 +79,7 @@ import { searchPostsByPostID } from '@/services/search.ts'
 import { getUserByID } from '@/services/auth.ts'
 import type { Post } from '@/models/Post'
 import type { User } from '@/models/User'
-import SoundCloudPlayer from '@/components/SoundCloudPlayer.vue'
+import MinimalSoundCloudPlayer from '@/components/MinimalSoundCloudPlayer.vue'
 
 const page = ref(0)
 const pageSize = 20
@@ -151,6 +170,17 @@ watch(
     similarPosts.value = posts.filter((p: Post) => p.postId !== newId)
   },
 )
+
+function downloadImage() {
+  if (!mainImage.value) return
+
+  const link = document.createElement('a')
+  link.href = imageSrc.value
+  link.download = `inspire_${post.value?.postId}.jpg` // or .png depending on your format
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 </script>
 
 <style scoped>
@@ -175,6 +205,7 @@ watch(
 /* --- author header --------------------------------------------------- */
 .author {
   display: flex;
+  font-size: 1rem;
   align-items: center;
   gap: 0.75rem;
   width: 100%;
@@ -203,7 +234,7 @@ watch(
 }
 
 /* --- close button ---------------------------------------------------- */
-.close-btn {
+.action-button {
   margin-top: 1.5rem;
   padding: 0.75rem 1.25rem;
   border: none;
@@ -216,19 +247,23 @@ watch(
     transform 0.3s ease,
     background 0.2s ease;
 }
-.close-btn:hover {
+
+.action-button:hover {
   background: rgba(255 255 255 / 0.9);
 }
-.close-btn:active {
+
+.action-button:active {
   transform: scale(0.97);
 }
-.close-btn:disabled {
+
+.action-button:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
 /* --- similar rail ---------------------------------------------------- */
 .similar {
+  will-change: transform;
   width: 40%;
   max-height: 90vh;
   overflow-y: auto;
@@ -272,10 +307,12 @@ watch(
     flex-direction: column;
     padding: 0 1rem;
   }
+
   .similar {
     width: 100%;
     order: 2;
   }
+
   .similar-grid {
     grid-template-columns: repeat(
       auto-fill,
@@ -287,5 +324,76 @@ watch(
 .audio-wrapper {
   margin-top: 1rem;
   width: 100%;
+}
+
+/* Fade + Scale for main post */
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.5s ease;
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+/* Basic fade for similar images */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.username-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.username-link:hover {
+  text-decoration: none;
+  opacity: 0.9;
+  transition: opacity ease 0.3s;
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center; /* optional: or use flex-end */
+}
+
+.button-row button {
+  //padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    background 0.2s ease;
+}
+
+.action-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.action-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+}
+
+.action-button:active {
+  transform: scale(0.97);
 }
 </style>

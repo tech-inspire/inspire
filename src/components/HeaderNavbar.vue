@@ -15,16 +15,21 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
 import InspireLogo from './InspireLogo.vue'
 import SearchInput from './SearchInput.vue'
 import { useSearchStore } from '@/stores/useSearchStore'
-import { getUserData } from '@/services/authCookies.js'
+import { useUserStore } from '@/stores/useUserStore'
 import { logout } from '@/services/auth.js'
+
 const searchStore = useSearchStore()
-let user = getUserData()
+const userStore = useUserStore()
+const user = computed(() => userStore.user)
 
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
+
 function onEnterSearch() {
   if (searchStore.searchQuery.trim()) {
     router.push({ path: '/search', query: { q: searchStore.searchQuery } })
@@ -33,7 +38,7 @@ function onEnterSearch() {
 
 function doLogout() {
   logout()
-  user = null
+  userStore.clearUser()
 }
 </script>
 

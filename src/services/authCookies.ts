@@ -1,6 +1,7 @@
 // services/authCookies.ts
 import CookieManager from '@/utils/cookieManager.ts'
 import type { AuthSession, User } from '@/models/User.ts'
+import { useUserStore } from '@/stores/useUserStore'
 
 export function setAuthTokens(authSession: AuthSession): void {
   CookieManager.setItem(
@@ -18,6 +19,9 @@ export function setAuthTokens(authSession: AuthSession): void {
     JSON.stringify(authSession.user),
     authSession.refreshTokenExpiresAt.getTime(),
   )
+
+  const userStore = useUserStore()
+  userStore.setUser(authSession.user)
 }
 
 export function clearAuthTokens(): void {

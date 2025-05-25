@@ -26,6 +26,20 @@ export async function searchPostsByPostID(
   return resulsts.results.map(mapSearchResult)
 }
 
+export async function searchPostsByUserID(
+  userID: string,
+  limit: number,
+  offset: number,
+): Promise<SearchResult[]> {
+  const resulsts = (await searchService.searchPosts({
+    authorId: userID,
+    offset: offset,
+    limit: limit,
+  })) as SearchImagesResponse
+
+  return resulsts.results.map(mapSearchResult)
+}
+
 export async function searchPostsByText(
   text: string,
   limit: number,

@@ -48,15 +48,13 @@ export default defineComponent({
     // Predefined fallback queries
     const fallbackQueries = [
       'black cats',
-      'sunset beach',
+      'mountains',
       'neon city',
-      'vintage cars',
-      'abstract art',
-      'rainy window',
+      'red mustang',
       'mountain landscape',
       'street photography',
-      'retro tech',
       'night sky',
+      'fruits',
     ]
 
     // If user supplied a query in URL (?q=...), use it
@@ -64,10 +62,14 @@ export default defineComponent({
       searchQuery.searchQuery = route.query.q as string
     }
 
-    // Otherwise, use a random fallback
-    if (!searchQuery.searchQuery) {
+    function selectRandomQuery() {
       const randomIndex = Math.floor(Math.random() * fallbackQueries.length)
       searchQuery.searchQuery = fallbackQueries[randomIndex]
+    }
+
+    // Otherwise, use a random fallback
+    if (!searchQuery.searchQuery) {
+      selectRandomQuery()
     }
 
     // Run the search
@@ -120,6 +122,9 @@ export default defineComponent({
     const searchStore = useSearchStore()
 
     watch(searchStore, () => {
+      if (!searchQuery.searchQuery) {
+        selectRandomQuery()
+      }
       debouncedSearchImages(true)
     })
 
@@ -158,10 +163,11 @@ export default defineComponent({
 
 .gallery-inner {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Minimum width per item */
   gap: 24px;
   width: 100%;
-  max-width: 1600px;
+  max-width: calc((300px * 4) + (24px * 4)); /* 4 columns and 3 gaps */
+  margin: 0 auto; /* Center the gallery */
 }
 
 /* Transition classes */

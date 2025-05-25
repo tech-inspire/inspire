@@ -13,6 +13,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import HoverTimer from '@/components/HoverTimer.vue'
+import { useSearchStore } from '@/stores/useSearchStore'
 
 const isHovered = ref(false)
 const router = useRouter()
@@ -26,6 +27,8 @@ function stopTimer() {
 }
 
 function redirectToHome() {
+  const store = useSearchStore()
+  store.searchQuery = ''
   router.push('/')
 }
 </script>

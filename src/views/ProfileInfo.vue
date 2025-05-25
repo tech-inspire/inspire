@@ -1,21 +1,15 @@
 <template>
-  <div class="profile">
-    <!-- ─────────────── HEADER (Avatar + Stats) ─────────────── -->
+  <div class="profile" v-if="user">
+    <!-- Header -->
     <section class="profile-header">
-      <img :src="user.photo" alt="Profile photo" class="avatar" />
+      <img v-if="avatarSrc" :src="avatarSrc" alt="Profile photo" class="avatar" />
 
       <div class="details">
-        <h2 class="username">{{ user.name }}</h2>
+        <h2 class="username">{{ user.username }}</h2>
 
         <ul class="stats">
           <li>
-            <strong>{{ user.posts }}</strong> posts
-          </li>
-          <li>
-            <strong>{{ user.followers }}</strong> followers
-          </li>
-          <li>
-            <strong>{{ user.following }}</strong> following
+            <strong>{{ posts.length }}</strong> posts
           </li>
         </ul>
 
@@ -23,37 +17,59 @@
       </div>
     </section>
 
-    <!-- ─────────────── POST GRID (simple placeholders) ─────────────── -->
+    <!-- Post Gallery -->
     <section class="gallery">
-      <!-- Replace with real post images later -->
-      <div v-for="n in user.posts" :key="n" class="square"></div>
+      <router-link
+        v-for="post in posts"
+        :key="post.postId"
+        :to="{ name: 'PostPage', params: { postId: post.postId } }"
+      >
+        <img class="post-img" :src="getThumbnail(post)" :alt="post.description" />
+      </router-link>
     </section>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
+import { ref, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { getUserByID } from '@/services/auth'
+import { searchPostsByUserID } from '@/services/search'
+import { getPostsByIDs } from '@/services/posts'
+import type { Post } from '@/models/Post'
+import type { User } from '@/models/User'
+import profileFallback from '@/assets/profile.svg'
 
-export default defineComponent({
-  name: 'ProfilePage',
-  data() {
-    return {
-      user: {
-        name: '@illiadymura',
-        joined: '2025-17-04',
-        bio: 'Вова їбаш їх блять',
-        photo: '/profile-example.jpg',
-        followers: 14,
-        following: 88,
-        posts: 5,
-      },
-    }
-  },
+const route = useRoute()
+const userId = route.params.userId as string // 👈 path param like /profile/abc123
+
+const user = ref<User>()
+const posts = ref<Post[]>([])
+
+const avatarSrc = computed(
+  () =>
+    user.value?.avatarUrl
+      ? `${import.meta.env.VITE_IMAGE_BASE_PATH}${user.value.avatarUrl}`
+      : profileFallback, // 👈 imported fallback
+)
+
+const getThumbnail = (post: Post) => {
+  const thumb = post.images.find((i) => i.variantType === 'THUMBNAIL') ?? post.images[0]
+  return `${import.meta.env.VITE_IMAGE_BASE_PATH}${thumb.url}`
+}
+
+onMounted(async () => {
+  if (!userId) return
+
+  user.value = await getUserByID(userId)
+
+  const results = await searchPostsByUserID(userId, 50, 0)
+  const ids = results.map((r) => r.postId)
+  posts.value = await getPostsByIDs(ids)
 })
 </script>
 
 <style scoped>
-/* ─────────────── LAYOUT ─────────────── */
 .profile {
   max-width: 935px;
   margin: 0 auto;
@@ -68,7 +84,6 @@ export default defineComponent({
   margin-bottom: 40px;
 }
 
-/* ─────────────── AVATAR & STATS ─────────────── */
 .avatar {
   width: 150px;
   height: 150px;
@@ -98,16 +113,18 @@ export default defineComponent({
   font-size: 14px;
 }
 
-/* ─────────────── GALLERY GRID ─────────────── */
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1px;
+  grid-gap: 10px;
 }
 
-.square {
+.post-img {
   width: 100%;
-  padding-bottom: 100%; /* Creates 1:1 */
-  background: #efefef;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  border-radius: 0.5rem; /* ⬅️ Rounded corners */
+  margin: 10px; /* ⬅️ Optional spacing between items */
 }
 </style>
