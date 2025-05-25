@@ -23,6 +23,7 @@
         <label>
           <span>Description</span>
           <textarea
+            style="resize: none"
             v-model="form.description"
             class="input-field"
             placeholder="Say something inspiring..."
@@ -31,10 +32,10 @@
           ></textarea>
         </label>
 
-        <div v-if="form.songUrl" class="soundcloud-preview">
+        <div v-if="soundcloudUrl" class="soundcloud-preview">
           <MinimalSoundCloudPlayer
-            :key="form.songStartTimeSeconds"
-            :songUrl="extractSoundCloudPath(form.songUrl)"
+            :key="`${form.songStartTimeSeconds}-${soundcloudUrl}`"
+            :songUrl="soundcloudUrl"
             :startTime="form.songStartTimeSeconds * 1000"
             @error="soundcloudError = $event"
           />
@@ -71,6 +72,8 @@
       </form>
     </Transition>
 
+    <h1 v-if="submitting">Creating Post...</h1>
+
     <p v-if="error" class="error-msg">{{ error }}</p>
   </div>
 </template>
@@ -94,8 +97,8 @@ function extractSoundCloudPath(url: string): string | null {
         return `${parts[0]}/${parts[1]}`
       }
     }
-  } catch (e) {
-    return null
+  } catch {
+    throw new Error('Invalid Soundcloud URL')
   }
   return null
 }
@@ -107,6 +110,7 @@ const form = reactive({
   songStartTimeSeconds: 0,
 })
 
+const soundcloudUrl = ref<string | null>(null)
 const imagePreview = ref<string | null>(null)
 const submitting = ref(false)
 const error = ref<string | null>(null)
@@ -116,6 +120,11 @@ watch(
   () => form.songUrl,
   () => {
     soundcloudError.value = null
+    try {
+      soundcloudUrl.value = extractSoundCloudPath(form.songUrl)
+    } catch (e) {
+      error.value = e
+    }
   },
 )
 
@@ -165,7 +174,7 @@ async function handleCreatePost() {
     })
 
     await router.push(`/posts/${post.postId}`)
-  } catch (e: any) {
+  } catch (e) {
     error.value = e?.message || 'Post creation failed.'
   } finally {
     submitting.value = false
