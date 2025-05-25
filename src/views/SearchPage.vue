@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import { useSearchStore } from '@/stores/useSearchStore'
 import { useDebounceFn } from '@vueuse/core'
 import ImageCard from '../components/ImageCard.vue'

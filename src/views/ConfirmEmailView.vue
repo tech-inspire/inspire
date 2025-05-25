@@ -48,7 +48,7 @@ async function submit() {
   try {
     await confirmEmailSvc(email.value, code.value)
     await router.push('/')
-  } catch (e: any) {
+  } catch (e) {
     error.value = e?.message ?? 'Invalid code'
   } finally {
     submitting.value = false

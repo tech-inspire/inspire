@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { defineProps } from 'vue'
 

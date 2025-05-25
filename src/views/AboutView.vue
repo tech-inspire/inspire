@@ -1,6 +1,4 @@
-<script setup>
-import TimerCounter from '../components/TimerCounter.vue'
-import Logo from '@/components/Logo.vue'
+<script lang="ts" setup>
 import SoundCloudPlayer from '@/components/SoundCloudPlayer.vue'
 
 const songURL = 'ivoxxxygen/acid-blue'

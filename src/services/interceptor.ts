@@ -1,7 +1,10 @@
 // services/interceptor.ts
 import { createConnectTransport } from '@connectrpc/connect-web'
 import { createClient, Code, ConnectError, type Interceptor } from '@connectrpc/connect'
-import { AuthService } from 'inspire-api-contracts/api/gen/ts/auth/v1/auth_pb.js'
+import {
+  AuthService,
+  type RefreshTokenRequest,
+} from 'inspire-api-contracts/api/gen/ts/auth/v1/auth_pb.js'
 import { setAuthTokens, clearAuthTokens } from './authCookies.ts'
 import CookieManager from '@/utils/cookieManager.ts'
 import router from '@/router'
@@ -19,7 +22,7 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
   console.log('inside interceptor')
   try {
     return await next(req)
-  } catch (err: any) {
+  } catch (err) {
     if (ConnectError.from(err).code === Code.Unauthenticated) {
       console.log('trying refresh here')
       const rt = CookieManager.getItem('refreshToken')
@@ -30,12 +33,12 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
       try {
         console.log('trying refresh', rt)
         // call refresh on the no-auth client
-        const raw = (await noAuthClient.refreshToken({ refreshToken: rt })) as any
+        const raw = (await noAuthClient.refreshToken({ refreshToken: rt })) as RefreshTokenRequest
         const session = mapAuthSession(raw)
         setAuthTokens(session)
         req.header.set('Authorization', `Bearer ${session.accessToken}`)
         return await next(req)
-      } catch (refreshErr: any) {
+      } catch (refreshErr) {
         if (ConnectError.from(refreshErr).code === Code.Unauthenticated) {
           clearAuthTokens()
           await router.push('/login')

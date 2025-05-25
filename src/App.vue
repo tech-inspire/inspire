@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import Navbar from './components/Navbar.vue'
+import HeaderNavbar from './components/HeaderNavbar.vue'
 import Footer from './components/PageFooter.vue' // ← NEW
 </script>
 
 <template>
-  <Navbar />
+  <HeaderNavbar />
 
   <div class="router-view-container">
     <router-view v-slot="{ Component, route }">

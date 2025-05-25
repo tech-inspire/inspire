@@ -9,7 +9,7 @@
   />
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, watch } from 'vue'
 
 // Props

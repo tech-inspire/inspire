@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import InspireLogo from './Logo.vue'
+import InspireLogo from './InspireLogo.vue'
 import SearchInput from './SearchInput.vue'
 import { useSearchStore } from '@/stores/useSearchStore'
 import { getUserData } from '@/services/authCookies.js'

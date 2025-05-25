@@ -65,7 +65,7 @@ async function handleLogin() {
     await loginSvc(loginPayload, credentials.password)
 
     await router.push('/')
-  } catch (e: any) {
+  } catch (e) {
     error.value = e?.message ?? 'Login failed'
   } finally {
     submitting.value = false

@@ -13,7 +13,7 @@ const props = defineProps<{ image: { postId: string; image_path: string; distanc
 const emit = defineEmits<{ (e: 'open', id: string): void }>()
 
 const imageSrc = computed(() => props.image.image_path)
-const similarityPercentage = computed(() => (100 - props.image.distance * 100).toFixed(2))
+// const similarityPercentage = computed(() => (100 - props.image.distance * 100).toFixed(2))
 
 const isLoading = ref(true)
 
