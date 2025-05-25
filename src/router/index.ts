@@ -60,6 +60,12 @@ export const router = createRouter({
       component: () => import('@/views/PostPage.vue'),
       props: true,
     },
+    {
+      path: '/posts/create',
+      name: 'PostCreatePage',
+      component: () => import('@/views/CreatePostView.vue'),
+      props: true,
+    },
   ],
 })
 

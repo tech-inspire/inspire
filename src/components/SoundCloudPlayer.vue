@@ -48,7 +48,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['loaded', 'playback-change'])
+const emit = defineEmits(['loaded', 'playback-change', 'error'])
 
 const isReady = ref(false)
 const isPlaying = ref(false)
@@ -102,12 +102,16 @@ onMounted(() => {
 
     widget.bind(window.SC.Widget.Events.READY, () => {
       widget.getCurrentSound((sound) => {
-        if (sound) {
+        if (sound && sound.title) {
           emit('loaded', {
             title: sound.title,
             artist: sound.user?.username,
             permalinkUrl: sound.permalink_url,
           })
+        } else {
+          console.warn('Failed to load SoundCloud track:', sound)
+          emit('error', 'SoundCloud track could not be loaded. Check the URL.')
+          return
         }
       })
 

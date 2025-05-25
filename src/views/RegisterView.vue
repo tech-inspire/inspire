@@ -1,5 +1,6 @@
 <template>
   <div class="auth-page">
+    <BackgroundPosts></BackgroundPosts>
     <Transition name="fade-slide" appear>
       <form v-if="!submitting" class="auth-card" @submit.prevent="handleRegister">
         <h1>Create account</h1>
@@ -66,7 +67,8 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { register as registerSvc } from '@/services/auth'
-import '@/styles/auth-base.css'
+import '@/styles/form-base.css'
+import BackgroundPosts from '@/components/BackgroundPosts.vue'
 
 const router = useRouter()
 

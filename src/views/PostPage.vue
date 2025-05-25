@@ -25,6 +25,7 @@
 
             <section class="audio-wrapper" v-if="post.soundcloudSong">
               <MinimalSoundCloudPlayer
+                :key="post.soundcloudSong"
                 :songUrl="post.soundcloudSong"
                 :startTime="post.soundcloudSongStart || 0"
               />
@@ -80,6 +81,7 @@ import { getUserByID } from '@/services/auth.ts'
 import type { Post } from '@/models/Post'
 import type { User } from '@/models/User'
 import MinimalSoundCloudPlayer from '@/components/MinimalSoundCloudPlayer.vue'
+import { getMainImageSrc, getAvatarSrc, getThumbnailSrc as thumbSrc } from '@/utils/imagePaths'
 
 const page = ref(0)
 const pageSize = 20
@@ -98,18 +100,8 @@ const mainImage = computed(
   () => post.value?.images.find((i) => i.variantType === 'ORIGINAL') ?? post.value?.images[0],
 )
 
-const imageSrc = computed(() =>
-  mainImage.value ? `${import.meta.env.VITE_IMAGE_BASE_PATH}${mainImage.value.url}` : '',
-)
-
-const avatarSrc = computed(() =>
-  author.value?.avatarUrl ? `${import.meta.env.VITE_IMAGE_BASE_PATH}${author.value.avatarUrl}` : '',
-)
-
-function thumbSrc(p: Post) {
-  const img = p.images.find((i) => i.variantType === 'THUMBNAIL') ?? p.images[0]
-  return `${import.meta.env.VITE_IMAGE_BASE_PATH}${img.url}`
-}
+const imageSrc = computed(() => getMainImageSrc(mainImage.value))
+const avatarSrc = computed(() => getAvatarSrc(author.value?.avatarUrl))
 
 function formatDate(d: Date) {
   return new Intl.DateTimeFormat('en', {

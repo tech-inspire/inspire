@@ -56,3 +56,12 @@ export async function searchPostsByText(
 
   return resulsts.results.map(mapSearchResult)
 }
+
+export async function searchRandomPosts(limit: number, offset: number): Promise<SearchResult[]> {
+  const resulsts = (await searchService.searchPosts({
+    offset: offset,
+    limit: limit,
+  })) as SearchImagesResponse
+
+  return resulsts.results.map(mapSearchResult)
+}

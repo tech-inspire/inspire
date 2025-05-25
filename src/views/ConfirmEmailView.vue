@@ -1,5 +1,6 @@
 <template>
   <div class="auth-page text-center">
+    <BackgroundPosts></BackgroundPosts>
     <Transition name="fade-slide" appear>
       <form class="auth-card confirm-wrap" @submit.prevent="submit">
         <h1>Enter confirmation code</h1>
@@ -32,7 +33,8 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { confirmEmail as confirmEmailSvc } from '@/services/auth'
-import '@/styles/auth-base.css'
+import '@/styles/form-base.css'
+import BackgroundPosts from '@/components/BackgroundPosts.vue'
 
 const route = useRoute()
 const router = useRouter()

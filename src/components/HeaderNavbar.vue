@@ -7,6 +7,7 @@
       <SearchInput v-model="searchStore.searchQuery" @enter="onEnterSearch" />
     </div>
     <div class="nav-links">
+      <a v-if="user" :href="`/posts/create`">Upload Post</a>
       <a v-if="user" :href="`/users/${user.id}`">My Profile</a>
       <a v-if="!user" href="/login">Sign In</a>
       <button v-else @click="doLogout" class="nav-link-button">Sign Out</button>

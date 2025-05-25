@@ -28,6 +28,7 @@
       :volumeControl="true"
       @loaded="onLoaded"
       @playback-change="isPlaying = $event"
+      @error="handleError"
     />
   </div>
 </template>
@@ -53,6 +54,11 @@ function togglePlayPause() {
   playerRef.value?.playPause()
 }
 
+const emit = defineEmits(['error'])
+
+function handleError(message: string) {
+  emit('error', message)
+}
 function onLoaded(data: { title: string; artist: string; permalinkUrl: string }) {
   trackTitle.value = data.title
   trackArtist.value = data.artist
@@ -90,7 +96,7 @@ function onLoaded(data: { title: string; artist: string; permalinkUrl: string })
   align-items: center;
   gap: 0.5rem;
   font-size: 1.2rem;
-  color: #555;
+  color: #c8c8c8;
   margin-top: 0.5rem;
   pointer-events: none;
 }
