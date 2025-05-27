@@ -46,7 +46,17 @@
         <div class="button-row">
           <button class="action-button" @click="goBack">× Close</button>
           <button class="action-button" @click="downloadImage">↓ Download</button>
+          <button v-if="showDeleteModal" class="action-button" @click="showDeleteConfirmModal = true">🗑 Delete</button>
         </div>
+        <transition name="fade">
+        <ConfirmModal
+          v-if="showDeleteConfirmModal"
+          title="Confirm Deletion"
+          message="Are you sure you want to delete this post? This action cannot be undone."
+          @confirm="handleDeletePost"
+          @cancel="showDeleteConfirmModal = false"
+        />
+        </transition>
       </article>
     </transition>
 
@@ -75,13 +85,15 @@
 <script lang="ts" setup>
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getPostByID, getPostsByIDs } from '@/services/posts.ts'
+import { getPostByID, getPostsByIDs, deletePost } from '@/services/posts.ts'
 import { searchPostsByPostID } from '@/services/search.ts'
 import { getUserByID } from '@/services/auth.ts'
 import type { Post } from '@/models/Post'
 import type { User } from '@/models/User'
 import MinimalSoundCloudPlayer from '@/components/MinimalSoundCloudPlayer.vue'
 import { getMainImageSrc, getAvatarSrc, getThumbnailSrc as thumbSrc } from '@/utils/imagePaths'
+import ConfirmModal from "@/components/ConfirmModal.vue";
+import {useUserStore} from "@/stores/useUserStore.ts";
 
 const page = ref(0)
 const pageSize = 20
@@ -94,6 +106,10 @@ const router = useRouter()
 const post = ref<Post>()
 const author = ref<User>()
 const similarPosts = ref<Post[]>([])
+
+const showDeleteModal = ref(false)
+const showDeleteConfirmModal = ref(false)
+
 
 /* --- helpers --- */
 const mainImage = computed(
@@ -145,10 +161,13 @@ onMounted(async () => {
 
   post.value = await getPostByID(id)
   author.value = await getUserByID(post.value.authorId)
+  showDeleteModal.value = post.value.authorId === userStore.user?.id
 
   page.value = 0
   await loadSimilarPosts(true)
 })
+
+const userStore = useUserStore();
 
 // Watch for route changes (if user clicks another similar post)
 watch(
@@ -156,6 +175,9 @@ watch(
   async (newId) => {
     post.value = await getPostByID(newId)
     author.value = await getUserByID(post.value.authorId)
+
+    showDeleteModal.value = post.value.authorId === userStore.user?.id
+
 
     const res = await searchPostsByPostID(newId as string, 20, 0)
     const posts = await getPostsByIDs(res.map((res) => res.postId))
@@ -173,6 +195,15 @@ function downloadImage() {
   link.click()
   document.body.removeChild(link)
 }
+
+async function handleDeletePost() {
+  if (post.value) {
+    await deletePost(post.value.postId)
+  }
+
+  router.push({ name: 'home' })
+}
+
 </script>
 
 <style scoped>
