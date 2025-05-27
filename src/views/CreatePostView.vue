@@ -163,13 +163,18 @@ async function handleCreatePost() {
       throw new Error(`Image upload failed: ${uploadResponse.status} - ${body}`)
     }
 
+    let soundcloudSong = null
+    if (form.songUrl) {
+      soundcloudSong = extractSoundCloudPath(form.songUrl)
+    }
+
     const post = await addPost({
       uploadSessionKey: uploadMeta.uploadSessionKey,
       imageWidth: width,
       imageHeight: height,
       imageSize: fileSize,
       description: form.description,
-      soundcloudSong: extractSoundCloudPath(form.songUrl) || null,
+      soundcloudSong: soundcloudSong ?? undefined,
       soundcloudSongStart: form.songStartTimeSeconds * 1000 || 0,
     })
 
