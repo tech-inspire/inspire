@@ -5,12 +5,12 @@ import type {
   GetPostsResponse,
   AddPostResponse,
   GetUploadUrlResponse,
-} from 'inspire-api-contracts/api/gen/ts/posts/v1/posts_pb.ts'
+} from 'inspire-api-contracts/api/gen/ts/posts/v1/posts_pb'
 
 import { mapPost } from '@/mappers/postsMapper.ts'
 import type { Post, UploadUrl } from '../models/Post'
 import { createClient } from '@connectrpc/connect'
-import { PostsService } from 'inspire-api-contracts/api/gen/ts/posts/v1/posts_pb.ts'
+import { PostsService } from 'inspire-api-contracts/api/gen/ts/posts/v1/posts_pb'
 
 function assertPostExists(post: unknown): asserts post is NonNullable<typeof post> {
   if (!post) {

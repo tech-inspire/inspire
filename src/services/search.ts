@@ -1,8 +1,8 @@
 import { mapSearchResult } from '@/mappers/searchMapper.ts'
 
 import { createClient } from '@connectrpc/connect'
-import { SearchService } from 'inspire-api-contracts/api/gen/ts/search/v1/search_pb.ts'
-import type { SearchImagesResponse } from 'inspire-api-contracts/api/gen/ts/search/v1/search_pb.ts'
+import { SearchService } from 'inspire-api-contracts/api/gen/ts/search/v1/search_pb'
+import type { SearchImagesResponse } from 'inspire-api-contracts/api/gen/ts/search/v1/search_pb'
 
 import type { SearchResult } from '@/models/SearchResult.ts'
 import { transport } from '@/services/api.ts'

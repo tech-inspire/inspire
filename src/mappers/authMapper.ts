@@ -1,7 +1,7 @@
 import type {
   User as ProtoUser,
   SuccessLoginResponse,
-} from 'inspire-api-contracts/api/gen/ts/auth/v1/auth_pb.ts'
+} from 'inspire-api-contracts/api/gen/ts/auth/v1/auth_pb'
 import type { User, AuthSession } from '../models/User'
 import { timestampDate } from '@bufbuild/protobuf/wkt'
 

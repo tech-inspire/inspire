@@ -1,4 +1,4 @@
-import { type SearchResult as ProtoSearchResult } from 'inspire-api-contracts/api/gen/ts/search/v1/search_pb.ts'
+import { type SearchResult as ProtoSearchResult } from 'inspire-api-contracts/api/gen/ts/search/v1/search_pb'
 import type { SearchResult } from '../models/SearchResult.ts'
 
 export function mapSearchResult(proto: ProtoSearchResult): SearchResult {
