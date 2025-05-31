@@ -5,5 +5,6 @@ export function mapSearchResult(proto: ProtoSearchResult): SearchResult {
   return {
     postId: proto.postId,
     score: proto.similarity,
+    image_path: `${import.meta.env.VITE_IMAGE_BASE_PATH}images/post_${proto.postId}`,
   }
 }
