@@ -21,10 +21,6 @@
 import { onMounted, ref, computed } from 'vue'
 
 const props = defineProps({
-  // trackId: {
-  //   type: Number | null,
-  //   required: false
-  // },
   songUrl: {
     // example: "2kizz21090/chto-to-xrupkoe"
     type: String,
@@ -95,14 +91,24 @@ const playPause = () => {
   })
 }
 
+interface Sound {
+  title: string
+  user?: {
+    username: string
+  }
+  permalink_url: string
+}
+
 onMounted(() => {
   const script = document.createElement('script')
   script.src = 'https://w.soundcloud.com/player/api.js'
   script.onload = () => {
+    // @ts-expect-error: SoundCloud API has no TS types
     widget = window.SC.Widget(iframe.value)
 
-    widget.bind(window.SC.Widget.Events.READY, () => {
-      widget.getCurrentSound((sound) => {
+    // @ts-expect-error: SoundCloud API has no TS types
+    widget.bind(window.SC!.Widget.Events.READY, () => {
+      widget.getCurrentSound((sound: Sound | null) => {
         if (sound && sound.title) {
           emit('loaded', {
             title: sound.title,
@@ -116,11 +122,13 @@ onMounted(() => {
         }
       })
 
+      // @ts-expect-error: SoundCloud API has no TS types
       widget.bind(window.SC.Widget.Events.PLAY, () => {
         isPlaying.value = true
         emit('playback-change', true)
       })
 
+      // @ts-expect-error: SoundCloud API has no TS types
       widget.bind(window.SC.Widget.Events.PAUSE, () => {
         isPlaying.value = false
         emit('playback-change', false)

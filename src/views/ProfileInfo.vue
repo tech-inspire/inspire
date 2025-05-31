@@ -13,7 +13,7 @@
           </li>
         </ul>
 
-        <p class="bio">{{ user.bio }}</p>
+        <p class="description">{{ user.description }}</p>
       </div>
     </section>
 
@@ -109,7 +109,7 @@ onMounted(async () => {
   font-weight: 600;
 }
 
-.bio {
+.description {
   font-size: 14px;
 }
 

@@ -22,7 +22,9 @@ const modelValue = ref(props.modelValue ?? '')
 watch(
   () => props.modelValue,
   (val) => {
-    modelValue.value = val
+    if (val) {
+      modelValue.value = val
+    }
   },
 )
 </script>

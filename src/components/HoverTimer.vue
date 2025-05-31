@@ -16,7 +16,7 @@ const props = defineProps({
 const isVisible = computed(() => props.visible)
 
 const time = ref(0)
-let intervalId = null
+let intervalId: number | undefined
 
 const formattedTime = computed(() => {
   const milliseconds = String(time.value % 1000)
@@ -37,7 +37,7 @@ watch(isVisible, (val) => {
     }
   } else {
     clearInterval(intervalId)
-    intervalId = null
+    intervalId = undefined
   }
 })
 

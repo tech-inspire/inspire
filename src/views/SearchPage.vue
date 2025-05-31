@@ -101,7 +101,7 @@ export default defineComponent({
 
       const newImages = res.map((m: SearchResult) => ({
         postId: m.postId,
-        image_path: `${import.meta.env.VITE_IMAGE_BASE_PATH}images/post_${m.postId}`,
+        image_path: m.image_path,
         distance: m.score ?? 0.0,
       }))
 

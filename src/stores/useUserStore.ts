@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getUserData } from '@/services/authCookies'
-import type {User} from "@/models/User.ts";
+import type { User } from '@/models/User.ts'
 
 export const useUserStore = defineStore('user', () => {
   const user = ref(getUserData())

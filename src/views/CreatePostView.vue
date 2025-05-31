@@ -83,6 +83,7 @@ import { ref, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUploadUrl, addPost } from '@/services/posts'
 import '@/styles/form-base.css'
+
 const router = useRouter()
 import { compressImage } from '@/utils/imageCompression.ts'
 import BackgroundPosts from '@/components/BackgroundPosts.vue'
@@ -123,7 +124,7 @@ watch(
     try {
       soundcloudUrl.value = extractSoundCloudPath(form.songUrl)
     } catch (e) {
-      error.value = e
+      error.value = e instanceof Error ? e.message : String(e)
     }
   },
 )
@@ -180,7 +181,7 @@ async function handleCreatePost() {
 
     await router.push(`/posts/${post.postId}`)
   } catch (e) {
-    error.value = e?.message || 'Post creation failed.'
+    error.value = e instanceof Error ? e.message : String(e)
   } finally {
     submitting.value = false
   }

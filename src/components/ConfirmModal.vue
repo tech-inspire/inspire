@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-overlay" @click.self="cancel">
+  <div class="modal-overlay">
     <div class="modal">
       <h2>{{ title }}</h2>
       <p>{{ message }}</p>
@@ -24,7 +24,7 @@ export default {
       default: 'Are you sure?',
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -68,7 +68,6 @@ export default {
 .confirm-button:hover {
   transform: scale(1.1);
 }
-
 
 .cancel-button {
   background-color: #ccc;

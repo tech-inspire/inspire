@@ -68,7 +68,7 @@ async function handleLogin() {
 
     await router.push('/')
   } catch (e) {
-    error.value = e?.message ?? 'Login failed'
+    error.value = error.value = e instanceof Error ? e.message : String(e)
   } finally {
     submitting.value = false
   }

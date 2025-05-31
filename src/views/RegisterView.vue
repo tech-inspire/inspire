@@ -92,7 +92,7 @@ async function handleRegister() {
       await router.push({ name: 'confirm-email', query: { email: form.email } })
     }
   } catch (e) {
-    error.value = e?.message ?? 'Registration failed'
+    error.value = e instanceof Error ? e.message : String(e)
   } finally {
     submitting.value = false
   }
