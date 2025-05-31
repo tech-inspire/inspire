@@ -11,6 +11,13 @@ import { setAuthTokens } from './authCookies.ts'
 import { Code, ConnectError } from '@connectrpc/connect'
 import CookieManager from '@/utils/cookieManager.ts'
 
+// wraps value for protobuf
+function wrap<Type>(a: Type) {
+  return {
+    value: a,
+  }
+}
+
 export async function login(
   login: { username?: string; email?: string },
   password: string,
@@ -60,18 +67,10 @@ export async function register(input: {
 }): Promise<RegisterResult> {
   // Call the generated client, passing a plain object (JSON mode) or a `create()`d request
   const res = (await authClient.register({
-    email: {
-      value: input.email,
-    },
-    username: {
-      value: input.username,
-    },
-    password: {
-      value: input.password,
-    },
-    name: {
-      value: input.name,
-    },
+    email: wrap(input.email),
+    username: wrap(input.username),
+    password: wrap(input.password),
+    name: wrap(input.name),
   })) as RegisterResponse
 
   switch (res.flow?.case) {
@@ -106,11 +105,16 @@ export async function logout(): Promise<void> {
 }
 
 export async function resetPassword(email: string): Promise<void> {
-  await authClient.resetPassword({ email })
+  await authClient.resetPassword({
+    email: wrap(email),
+  })
 }
 
 export async function checkPasswordResetCode(email: string, code: string): Promise<void> {
-  await authClient.checkPasswordResetCode({ email, code })
+  await authClient.checkPasswordResetCode({
+    email: wrap(email),
+    code: wrap(code),
+  })
 }
 
 export async function confirmPasswordReset(
@@ -118,18 +122,18 @@ export async function confirmPasswordReset(
   code: string,
   password: string,
 ): Promise<void> {
-  await authClient.confirmPasswordReset({ email, code, password })
+  await authClient.confirmPasswordReset({
+    email: wrap(email),
+    code: wrap(code),
+    password: wrap(password),
+  })
 }
 
 export async function confirmEmail(email: string, code: string): Promise<void> {
   try {
     const response = (await authClient.confirmEmail({
-      email: {
-        value: email,
-      },
-      code: {
-        value: code,
-      },
+      email: wrap(email),
+      code: wrap(code),
     })) as SuccessLoginResponse
 
     const authSession = mapAuthSession(response)
