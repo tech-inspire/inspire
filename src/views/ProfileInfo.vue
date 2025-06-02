@@ -74,7 +74,6 @@ onMounted(async () => {
   max-width: 935px;
   margin: 0 auto;
   padding: 40px 20px;
-  font-family: 'San Francisco';
 }
 
 .profile-header {
@@ -124,7 +123,12 @@ onMounted(async () => {
   aspect-ratio: 1 / 1;
   object-fit: cover;
   display: block;
-  border-radius: 0.5rem; /* ⬅️ Rounded corners */
-  margin: 10px; /* ⬅️ Optional spacing between items */
+  border-radius: 0.5rem;
+  margin: 10px;
+  transition: transform 0.2s;
+}
+
+.post-img:hover {
+  transform: scale(1.01);
 }
 </style>
