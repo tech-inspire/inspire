@@ -37,8 +37,6 @@ function redirectToHome() {
 .wrapper {
   position: relative;
   display: inline-block;
-  //padding: 2rem;
-  //background-color: black;
 }
 
 .logo {
@@ -46,7 +44,6 @@ function redirectToHome() {
   font-weight: bold;
   font-family: 'Helvetica Neue', sans-serif;
   color: white;
-  //display: flex;
   align-items: center;
   vertical-align: middle;
   cursor: pointer;

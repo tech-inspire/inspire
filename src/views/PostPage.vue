@@ -41,6 +41,9 @@
           <time :datetime="post.createdAt.toISOString()">
             Posted at {{ formatDate(post.createdAt) }} - Inspire Web
           </time>
+          <h4 style="color: var(--vt-c-text-dark-2)" v-if="post_likes !== undefined">
+            {{ post_likes }} likes
+          </h4>
         </section>
 
         <div class="button-row">
@@ -100,6 +103,7 @@ import MinimalSoundCloudPlayer from '@/components/MinimalSoundCloudPlayer.vue'
 import { getMainImageSrc, getAvatarSrc, getThumbnailSrc as thumbSrc } from '@/utils/imagePaths'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import { useUserStore } from '@/stores/useUserStore.ts'
+import { getPostLikesCount, hasUserLikedPost } from '@/services/likes.ts'
 
 const page = ref(0)
 const pageSize = 20
@@ -109,6 +113,8 @@ const route = useRoute()
 const router = useRouter()
 
 /* --- reactive state --- */
+const post_likes = ref<number | undefined>(undefined)
+const liked_post = ref<boolean>()
 const post = ref<Post>()
 const author = ref<User>()
 const similarPosts = ref<Post[]>([])
@@ -167,6 +173,19 @@ onMounted(async () => {
   post.value = await getPostByID(id)
   author.value = await getUserByID(post.value.authorId)
   showDeleteModal.value = post.value.authorId === userStore.user?.id
+
+  try {
+    // get likes
+    post_likes.value = Number(await getPostLikesCount(id))
+    console.log('yeah', post_likes.value)
+
+    const store = useUserStore()
+    if (store.user?.id) {
+      liked_post.value = await hasUserLikedPost(id, store.user?.id)
+    }
+  } catch (error) {
+    console.log(error)
+  }
 
   page.value = 0
   await loadSimilarPosts(true)
@@ -255,6 +274,9 @@ async function handleDeletePost() {
 
 /* --- caption --------------------------------------------------------- */
 .caption {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
   padding: 1rem 0.5rem;
 }
