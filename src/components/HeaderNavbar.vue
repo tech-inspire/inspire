@@ -74,27 +74,22 @@ function doLogout() {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  flex-wrap: nowrap;
+  gap: 2rem;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-link-button {
   color: #ccc;
   text-decoration: none;
-  margin-left: 2rem;
   font-size: 1.2rem;
   transition: color 0.3s;
-}
-
-.nav-link-button {
   background: none;
   border: none;
-  color: #ccc;
-  margin-left: 2rem;
-  font-size: 1.2rem;
   font-family: inherit;
   cursor: pointer;
-  text-decoration: none;
-  transition: color 0.3s;
   padding: 0;
+  white-space: nowrap;
 }
 
 .nav-link-button:hover {
@@ -103,5 +98,43 @@ function doLogout() {
 
 .nav-links a:hover {
   color: white;
+}
+
+@media (max-width: 768px) {
+  .nav-links a,
+  .nav-link-button {
+    font-size: 1rem;
+  }
+
+  .nav-links {
+    gap: 1.5rem;
+  }
+
+  .search-wrapper {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links a,
+  .nav-link-button {
+    font-size: 0.9rem;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .logo-wrapper {
+    flex: 2;
+  }
+
+  .nav-links {
+    flex: 3;
+  }
 }
 </style>
