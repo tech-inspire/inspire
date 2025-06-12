@@ -41,6 +41,18 @@
           <time :datetime="post.createdAt.toISOString()">
             Posted at {{ formatDate(post.createdAt) }} - Inspire Web
           </time>
+          <div class="fl" v-if="post_likes !== undefined">
+            <LikeButton
+              :is_liked="liked_post ?? false"
+              @like_change="onLike"
+              class="like-icon"
+            ></LikeButton>
+            <transition name="like-fade" mode="out-in">
+              <h4 :key="post_likes" style="color: var(--vt-c-text-dark-2)">
+                {{ post_likes }} like{{ post_likes === 1 ? '' : 's' }}
+              </h4>
+            </transition>
+          </div>
         </section>
 
         <div class="button-row">
@@ -100,6 +112,8 @@ import MinimalSoundCloudPlayer from '@/components/MinimalSoundCloudPlayer.vue'
 import { getMainImageSrc, getAvatarSrc, getThumbnailSrc as thumbSrc } from '@/utils/imagePaths'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import { useUserStore } from '@/stores/useUserStore.ts'
+import { getPostLikesCount, hasUserLikedPost, likePost, unlikePost } from '@/services/likes.ts'
+import LikeButton from '@/components/LikeButton.vue'
 
 const page = ref(0)
 const pageSize = 20
@@ -109,6 +123,8 @@ const route = useRoute()
 const router = useRouter()
 
 /* --- reactive state --- */
+const post_likes = ref<number | undefined>(undefined)
+const liked_post = ref<boolean>()
 const post = ref<Post>()
 const author = ref<User>()
 const similarPosts = ref<Post[]>([])
@@ -168,9 +184,35 @@ onMounted(async () => {
   author.value = await getUserByID(post.value.authorId)
   showDeleteModal.value = post.value.authorId === userStore.user?.id
 
+  try {
+    const store = useUserStore()
+    if (store.user?.id) {
+      liked_post.value = await hasUserLikedPost(id, store.user?.id)
+    }
+
+    // get likes
+    post_likes.value = Number(await getPostLikesCount(id))
+    console.log('yeah', post_likes.value)
+  } catch (error) {
+    console.log(error)
+  }
+
   page.value = 0
   await loadSimilarPosts(true)
 })
+
+async function onLike(liked: boolean) {
+  const id = route.params.postId as string
+
+  if (liked) {
+    await likePost(id)
+  } else {
+    await unlikePost(id)
+  }
+  if (post_likes.value !== undefined) {
+    post_likes.value += liked ? 1 : -1
+  }
+}
 
 const userStore = useUserStore()
 
@@ -255,8 +297,21 @@ async function handleDeletePost() {
 
 /* --- caption --------------------------------------------------------- */
 .caption {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
   padding: 1rem 0.5rem;
+}
+
+.fl {
+  display: flex;
+  flex-direction: row;
+}
+
+.like-icon {
+  margin-right: 0.5rem;
+  margin-top: 5px;
 }
 
 /* --- close button ---------------------------------------------------- */
