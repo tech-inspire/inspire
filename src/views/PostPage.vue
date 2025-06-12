@@ -192,7 +192,6 @@ onMounted(async () => {
 
     // get likes
     post_likes.value = Number(await getPostLikesCount(id))
-    console.log('yeah', post_likes.value)
   } catch (error) {
     console.log(error)
   }
